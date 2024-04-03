@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import NavBar from "./components/NavBar";
-import { UserProvider } from "./UserContext";
+import { UserProvider } from "./contexts/UserContext";
+import { CartProvider } from "./contexts/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,9 +23,11 @@ export default function RootLayout({
     <html lang="en">
         <body>
           <UserProvider>
-            {/* Layout UI */}
-            <NavBar />
-            <main>{children}</main>
+            <CartProvider>
+              {/* Layout UI */}
+              <NavBar />
+              <main>{children}</main>
+            </CartProvider>
           </UserProvider>
         </body> 
     </html>

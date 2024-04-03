@@ -1,6 +1,6 @@
 "use client"
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User } from "./types";
+import { User } from "../types";
 
 const UserContext = createContext<{
     user: User,
@@ -24,7 +24,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (user_id) {
             setUser({ id: parseInt(user_id) });
         }
-
     }, []);
 
     const logout = () => {

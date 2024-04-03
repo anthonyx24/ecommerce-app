@@ -1,16 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { Product } from "./types";
-import { useUser } from "./UserContext";
+import { Product, ProductInfo } from "./types";
+import { useUser } from "./contexts/UserContext";
+import { useCart } from "./contexts/CartContext";
 import { get_products } from "./services";
-import { guest_create_cart, authenticated_create_cart, add_item } from "./services";
+
 
 export default function Home() {
 
     const { user } = useUser();
+    const { add_item } = useCart();
 
-    const [products, setProducts] = useState<Product[] | undefined>();
+    const [products, setProducts] = useState<ProductInfo[] | undefined>();
 
     useEffect(() => {
         
@@ -27,32 +29,32 @@ export default function Home() {
         load_products();
     }, []);
 
-    useEffect(() => {
-        // Creates a cart as soon as the user is loaded in, will recreate if user changes
-        const create_cart = async () => {
-            if (user) {
-                console.log("Creating cart for user: ", user.id);
-                const cart_id = await authenticated_create_cart(user.id);
-                console.log("Cart created: ", cart_id);
-                sessionStorage.addItem("cart_id", cart_id);
-            }
-            else {
-                console.log("Creating cart for guest");
-                const cart_id = await guest_create_cart();
-                console.log("Cart created: ", cart_id);
-                sessionStorage.addItem("cart_id", cart_id);
-            }
-        }
+    // useEffect(() => {
+    //     // Creates a cart as soon as the user is loaded in, will recreate if user changes
+    //     const create_cart = async () => {
+    //         if (user) {
+    //             console.log("Creating cart for user: ", user.id);
+    //             const cart = await authenticated_create_cart(user.id);
+    //             console.log("Cart created: ", cart);
+    //             sessionStorage.setItem("cart_id", cart.id);
+    //         }
+    //         else {
+    //             console.log("Creating cart for guest");
+    //             const cart = await guest_create_cart();
+    //             console.log("Cart created: ", cart);
+    //             sessionStorage.setItem("cart_id", cart.id);
+    //         }
+    //     }
 
-        // if cart does not exist from previous initialization, create a cart
-        if (!sessionStorage.getItem("cart_id")) {
-            create_cart();
-        } 
-    }, [user]); // detects when user changes
+    //     // if cart does not exist from previous initialization, create a cart
+    //     if (!sessionStorage.getItem("cart_id")) {
+    //         create_cart();
+    //     } 
+    // }, [user]); // detects when user changes
 
     // Test for now, will be handled in product page
     const handleAdd = ( product_id: number ) => {
-        add_item(parseInt(sessionStorage.getItem("cart_id") ?? ""), product_id, 1);
+        add_item(product_id, 1);
     }
 
     return (

@@ -1,11 +1,19 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { useUser } from "../UserContext";
+import { useUser } from "../contexts/UserContext";
+import { useCart } from "../contexts/CartContext";
+import { save_cart } from "../services";
 import Link from "next/link";
 
 export default function NavBar() {
 
     const { user, logout } = useUser();
+    const { cart } = useCart();
+
+    const handle_logout = (user_id: number) => {
+        save_cart(user_id, cart);
+        logout();
+    }
 
     return (
         <div className="flex justify-between items-center">
@@ -17,7 +25,7 @@ export default function NavBar() {
             </Link>
             {user ? (
                 <Link href="/">
-                    <div onClick={logout}>Logout</div>
+                    <div onClick={() => handle_logout(user.id)}>Logout</div>
                 </Link>
             ) : (
                 <div>

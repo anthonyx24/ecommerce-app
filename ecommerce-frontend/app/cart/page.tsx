@@ -1,21 +1,37 @@
 "use client";
 import React, { useState, useEffect } from "react";
-// import { useUser } from "../UserContext";
-import { get_cart, add_item, remove_item } from "../services";
+import { useCart } from "../contexts/CartContext";
+import { fetch_cart_data } from "../services";
+import { ProductInfo } from "../types";
 
 export default function Cart() {
 
-    // const [items, setItems] = useState<any>();
-    // const [total, setTotal] = useState<number>(0);
+    const [items, setItems] = useState<ProductInfo[]>(); // has info about each product
+    const [total, setTotal] = useState<number>(0);
+
+    const { cart, loading } = useCart(); // only contains product_id and quantity
 
     useEffect(() => {
-        const cart = get_cart(parseInt(sessionStorage.getItem("cart_id") ?? ""));
-        console.log(cart);
-    }, []);
+        if(!loading) {
+            const load_cart = async () => {
+                const fetched_cart = await fetch_cart_data(cart);
+                console.log(fetched_cart);
+                setItems(fetched_cart.products);
+                setTotal(fetched_cart.total);
+            }
+            load_cart();
+        }
+    }, [loading, cart]);
 
     return (
-        <div className="flex">
-            <h1>Cart Page</h1>
+        <div className="flex flex-col">
+            {items?.map((item) => (
+                <div key={item.id} className="flex justify-between">
+                    <p>Name: {item.title}</p>
+                    <p>Price: {item.price}</p>
+                    <p>Quantity: {item.quantity}</p>
+                </div>
+            ))}
         </div>
     );
 }

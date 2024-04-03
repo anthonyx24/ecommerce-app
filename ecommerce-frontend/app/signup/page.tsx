@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useUser } from "../UserContext";
+import { useUser } from "../contexts/UserContext";
 import { signup } from "./services";
 
 export default function Signup() {
