@@ -1,5 +1,6 @@
 import models
 from sqlalchemy.orm import Session
+from schemas import CartPayload
 
 def create_user(username: str, password: str, db: Session):
     # Check if username already exists in the database
@@ -25,14 +26,14 @@ def get_cart(user_id: int, db: Session):
     items = db.query(models.Item).filter(models.Item.user_id == user_id).all()
     return items
 
-def update_cart(cart: dict, user_id: int, db: Session):
+def update_cart(cart: CartPayload, user_id: int, db: Session):
     # Clear all items from the cart
     db.query(models.Item).filter(models.Item.user_id == user_id).delete()
     db.commit()
     
     # Add all items from the cart
-    for item in cart["items"]:
-        db.add(models.Item(user_id=user_id, product_id=item["id"], quantity=item["quantity"]))
+    for item in cart.items:
+        db.add(models.Item(user_id=user_id, id=item.id, quantity=item.quantity))
     db.commit()
     return "Cart updated"
 

@@ -1,63 +1,66 @@
-import { Cart, Product } from "./types";
+import { Cart, Product, ProductInfo } from "./types";
 
 // Gets all products from dummy API
 export const get_products = async () => {
     try {
-        const response = await fetch('https://dummyjson.com/products')
+        const response = await fetch('https://dummyjson.com/products?limit=0')
         if (!response.ok) {
             throw new Error("Error fetching products. Status: " + response.status + " Message: " + response.statusText);
         }
         const data = await response.json();
         return data.products;
     } catch (error) {
-        console.error("Error fetching products: ", error);
+        console.error(error);
     }
 } 
 
-// Gets the items (product_id and quantity) from the backend db
-export const authenticated_get_items = async (user_id: number) => {
+export const search_products = async (query: string) => {
     try {
-        const response = await fetch(`http://localhost:3000/carts/${user_id}`)
-        if(!response.ok) {
-            throw new Error(`Error fetching items from user ${user_id}. Status: ` + response.status + " Message: " + response.statusText);
+        const response = await fetch('https://dummyjson.com/products/search?q=' + query)
+        if (!response.ok) {
+            throw new Error("Error fetching searched products. Status: " + response.status + " Message: " + response.statusText);
         }
-        const items = await response.json();
-        return items;
+        const data = await response.json();
+        return data.products;
     } catch (error) {
-        console.error(`Error creating cart for user ${user_id}: `, error);
+        console.error(error);
+    }
+}
+
+export const filter_products = async (category: string) => {
+    try {
+        const response = await fetch('https://dummyjson.com/products/category/' + category)
+        if (!response.ok) {
+            throw new Error("Error fetching filtered products. Status: " + response.status + " Message: " + response.statusText);
+        }
+        const data = await response.json();
+        return data.products;
+    } catch (error) {
+        console.error(error);
     }
 }
 
 
-// Creates a cart on dummy API with current cart data
-export const fetch_cart_data = async (cart: Cart) => {
-    console.log("Creating cart with: ", cart);
+// Gets the items (product_id and quantity) from the backend db
+export const authenticated_get_items = async (user_id: number) => {
     try {
-        const response = await fetch('https://dummyjson.com/carts/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: 1,
-                products: cart.products
-            })
-        });
-        if (!response.ok) {
-            throw new Error(`Error creating cart. Status: ` + response.status + " Message: " + response.statusText);
+        const response = await fetch(`http://localhost:8000/cart/${user_id}`)
+        if(!response.ok) {
+            throw new Error(`Error fetching items from user ${user_id}. Status: ` + response.status + " Message: " + response.statusText);
         }
-        const data = await response.json();
-        return data;
+        const items = await response.json();
+        console.log(`Fetched items from ${user_id}`, items);
+        return items;
     } catch (error) {
-        console.error("Error creating cart: ", error);
+        console.error(error);
     }
 }
 
 // Saves the existing cart to the backend db of the user
 export const save_cart = async (user_id: number, cart: Cart) => {
     try {
-        const response = await fetch(`http://localhost:3000/carts/${user_id}`, {
-            method: 'PUT',
+        const response = await fetch(`http://localhost:8000/cart/${user_id}`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -74,7 +77,7 @@ export const save_cart = async (user_id: number, cart: Cart) => {
 // Fetches the cart from the backend db, then creates a dummy cart with the existing items to get total price
 // export const authenticated_create_cart = async (user_id: number) => {
 //     try {
-//         const response = await fetch(`http://localhost:3000/carts/${user_id}`)
+//         const response = await fetch(`http://localhost:8000/carts/${user_id}`)
 //         if(!response.ok) {
 //             throw new Error(`Error fetching items from user ${user_id}. Status: ` + response.status + " Message: " + response.statusText);
 //         }

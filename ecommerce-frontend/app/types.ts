@@ -16,7 +16,7 @@ export interface Product {
 }
 
 export interface Cart {
-    products: Product[];
+    items: Product[];
 }
 
 export type User = {

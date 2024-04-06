@@ -1,9 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import { useUser } from "../contexts/UserContext";
 import { signup } from "./services";
 
 export default function Signup() {
+
+    const router = useRouter();
 
     const { login } = useUser();
 
@@ -22,7 +26,10 @@ export default function Signup() {
 
     const handleSignup = async () => {
 
-        console.log("Signing up");
+        if (!username.trim() || !password.trim()) {
+            setError("Username and password cannot be empty");
+            return;
+        }
 
         const data = await signup(username, password);
 
@@ -34,6 +41,7 @@ export default function Signup() {
             else {
                 console.log("Signed up successfully");
                 login(data);
+                router.push("/");
             }
         }
         else {
@@ -42,10 +50,23 @@ export default function Signup() {
     }
 
     return (
-        <div className="flex flex-col">
-            <input type="text" placeholder="Username" value={username} onChange={handleUsernameChange} />
-            <input type="password" placeholder="Password" value={password} onChange={handlePasswordChange} />
-            <button type="button" onClick={handleSignup}>Signup</button>
+        <div className="flex flex-col gap-[40px] w-[40%] self-center pt-[10vh]">
+            <input 
+                type="text" 
+                placeholder="Username" 
+                value={username}
+                onChange={handleUsernameChange}
+                className="flex w-full py-[12px] px-[16px] justify-between items-center rounded-[8px] border-[1px] border-[#ccc] font-jakarta text-[20px] font-normal"
+            />
+            <input 
+                type="password" 
+                placeholder="Password" 
+                value={password}
+                onChange={handlePasswordChange}
+                className="flex w-full py-[12px] px-[16px] justify-between items-center rounded-[8px] border-[1px] border-[#ccc] font-jakarta text-[20px] font-normal"
+            />
+            <button onClick={handleSignup} className="flex flex-grow py-[12px] px-[16px] justify-center items-center rounded-[8px] bg-black text-[#fff] font-jakarta text-[20px] font-[500]">Sign Up</button>
+            {error && <div className="text-[#EE4B2B] text-[18px] font-jakarta font-normal">{error}</div>}
         </div>
     )
 

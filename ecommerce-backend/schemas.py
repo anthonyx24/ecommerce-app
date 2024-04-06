@@ -6,7 +6,7 @@ class UserPayload(BaseModel):
     password: str
 
 class Item(BaseModel):
-    product_id: int
+    id: int
     quantity: int
 
 class CartPayload(BaseModel):

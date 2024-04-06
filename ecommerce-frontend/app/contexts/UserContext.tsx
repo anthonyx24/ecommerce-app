@@ -27,12 +27,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const logout = () => {
-        // push any changes to the cart to the backend db
-        sessionStorage.removeItem('user_id');
         setUser(null);
+        sessionStorage.removeItem('cart');
+        sessionStorage.removeItem('user_id');
     }
 
     const login = (user_id: string) => {
+        sessionStorage.removeItem('cart'); // makes way for new cart to come in
         sessionStorage.setItem('user_id', user_id);
         setUser({ id: parseInt(user_id) })
     } 

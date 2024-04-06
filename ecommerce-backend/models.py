@@ -12,9 +12,9 @@ class User(Base):
 class Item(Base):
     __tablename__ = "items"
 
-    id = Column(Integer, primary_key=True, index=True)
+    table_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    product_id = Column(Integer)
+    id = Column(Integer)
     quantity = Column(Integer)
 
     
